@@ -5,16 +5,30 @@ import Lista from "./components/Lista";
 import { Form } from "./components/Form";
 import { useEffect, useState } from "react";
 import { tareas as tareasDB } from "./DataBase/db.json";
+import Swal from "sweetalert2";
 
 const initalForm = {
   id: null,
   titulo: "",
   descripcion: "",
 };
-const contMargin = "m-[2rem]";
+
 function App() {
+  const [theme, setTheme] = useState("light");
   const [tareas, setTareas] = useState(tareasDB);
   const [form, setForm] = useState(initalForm);
+  const contMargin = `m-[2rem]`;
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.querySelector("html").classList.add("dark");
+    } else {
+      document.querySelector("html").classList.remove("dark");
+    }
+  }, [theme]);
+  const handleDark = (e) => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
 
   //GET
   useEffect(() => {
@@ -32,7 +46,7 @@ function App() {
     };
 
     obtenerTareas();
-  }, [tareas]);
+  }, []);
   //CREACION DE TAREA
   const crearTarea = async (form) => {
     try {
@@ -86,54 +100,90 @@ function App() {
   //BORRAR TAREA
   const borrarTarea = async (id) => {
     console.log("borrando", id);
-    try {
-      const response = await fetch(`http://localhost:3000/tareas/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
 
-      if (response.ok) {
-        const nuevasTareas = tareas.filter((t) => t.id !== id);
-        setTareas(nuevasTareas);
-      } else {
-        alert("error al enviar la tarea");
+    const confirm = await Swal.fire({
+      title: "Eliminar tarea?",
+      showDenyButton: true,
+      confirmButtonText: "Eliminar",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:3000/tareas/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (response.ok) {
+          const nuevasTareas = tareas.filter((t) => t.id !== id);
+          setTareas(nuevasTareas);
+        } else {
+          alert("error al enviar la tarea");
+        }
+        Swal.fire({
+          title: "Eliminada correctamente!",
+          icon: "success",
+        });
+      } catch (error) {
+        console.log("Error:", error);
       }
-      alert("tarea borrada");
-    } catch (error) {
-      console.log("Error:", error);
     }
   };
   return (
     <>
       <Router>
+        <div className={`${contMargin} dark:bg-black  `}>
+          <Header />
+        </div>
+        <div>
+          <button onClick={handleDark}>Dark</button>
+        </div>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className={`${contMargin}`}>
-                <Header />
-                <div className="flex gap-[4rem]">
-                  <div className={`${contMargin}`}>
-                    <Form
-                      form={form}
-                      setForm={setForm}
-                      crearTarea={crearTarea}
-                      editarTarea={editarTarea}
-                    />
-                  </div>
-                  <div className={`${contMargin}`}>
-                    <Lista
-                      tareas={tareas}
-                      setForm={setForm}
-                      borrarTarea={borrarTarea}
-                    />
+          <Route path="/">
+            <Route
+              index
+              element={
+                <div className={`${contMargin}`}>
+                  <div className="flex gap-[1rem]">
+                    <div className={`${contMargin}`}>
+                      <Form
+                        form={form}
+                        setForm={setForm}
+                        crearTarea={crearTarea}
+                        editarTarea={editarTarea}
+                      />
+                    </div>
+                    <div className={`${contMargin}`}>
+                      <Lista
+                        tareas={tareas}
+                        setForm={setForm}
+                        borrarTarea={borrarTarea}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          >
-            <Route path="info" element={<Info />} />
-            <Route path="lista" element={<Lista />} />
+              }
+            />
+            <Route
+              path="info"
+              element={
+                <div className={`${contMargin}`}>
+                  <Info />
+                </div>
+              }
+            />
+            <Route
+              path="lista"
+              element={
+                <div className={`${contMargin}`}>
+                  <Lista
+                    tareas={tareas}
+                    setForm={setForm}
+                    borrarTarea={borrarTarea}
+                  />
+                </div>
+              }
+            />
           </Route>
         </Routes>
       </Router>

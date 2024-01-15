@@ -25,7 +25,7 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
 
   return (
     <Card color="transparent" shadow={false}>
-      <div className="flex flex-col gap-2 w-[14rem]">
+      <div className="flex flex-col gap-2 w-[14rem] ">
         <Typography variant="h4" color="blue-gray">
           Agrega una tarea:
         </Typography>
@@ -61,7 +61,7 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
           />
 
           <Button className="mt-3 w-full" fullWidth type="submit">
-            Crear
+            {form.id ? "Guardar Cambios" : "Crear"}
           </Button>
         </form>
       </div>

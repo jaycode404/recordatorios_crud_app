@@ -1,34 +1,19 @@
 {
   "tareas": [
     {
+      "id": 1,
+      "titulo": "Optimizar Aplicacion",
+      "descripcion": "Agregar alertas, etc.."
+    },
+    {
+      "id": 2,
+      "titulo": "Crear Mas proyectos para el portafolio",
+      "descripcion": "Debe ser algo mas impresionante de lo habitual,Debe ser algo mas impresionante de lo habitual,Debe ser algo mas impresionante de lo habitual,Debe ser algo mas impresionante de lo habitual,Debe ser algo mas impresionante de lo habitual,Debe ser algo mas impresionante de lo habitual,"
+    },
+    {
       "id": 3,
-      "titulo": "Objeto 3",
-      "descripcion": "Descripción del objeto 3"
-    },
-    {
-      "id": 4,
-      "titulo": "Objeto 4",
-      "descripcion": "Descripción del objeto 4"
-    },
-    {
-      "id": 5,
-      "titulo": "Objeto 5",
-      "descripcion": "Descripción del objeto 5"
-    },
-    {
-      "id": 6,
-      "titulo": "buenas",
-      "descripcion": "tardes"
-    },
-    {
-      "id": 8,
-      "titulo": "una tarea muy nueva",
-      "descripcion": "asldk"
-    },
-    {
-      "id": 9,
-      "titulo": "beunas tard CORREGIF",
-      "descripcion": "asdasd"
+      "titulo": "Crear lista de clientes para la venta de paginas web",
+      "descripcion": "Crear lista de clientes potenciales para que adquieran su nueva y funcional pagina web donde puedan contactarlos y revisar sus servicios"
     }
   ]
 }

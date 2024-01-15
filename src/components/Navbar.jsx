@@ -4,11 +4,13 @@ import {
   Collapse,
   Typography,
   IconButton,
+  Button,
 } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, NavLink } from "react-router-dom";
 
 function NavList() {
+  
   return (
     <ul className="my-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
@@ -37,11 +39,12 @@ function NavList() {
           Info
         </NavLink>
       </Typography>
+     
     </ul>
   );
 }
 
-export function NavbarSimple() {
+export function NavbarSimple({setTheme}) {
   const [openNav, setOpenNav] = React.useState(false);
 
   const handleWindowResize = () =>
@@ -64,18 +67,7 @@ export function NavbarSimple() {
         <div className="hidden lg:block">
           <NavList />
         </div>
-        <IconButton
-          variant="text"
-          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-          ripple={false}
-          onClick={() => setOpenNav(!openNav)}
-        >
-          {openNav ? (
-            <XMarkIcon className="h-6 w-6" strokeWidth={2} />
-          ) : (
-            <Bars3Icon className="h-6 w-6" strokeWidth={2} />
-          )}
-        </IconButton>
+        
       </div>
       <Collapse open={openNav}>
         <NavList />
