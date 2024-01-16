@@ -1,6 +1,6 @@
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
-
-export function Form({ form, setForm, crearTarea, editarTarea }) {
+import Swal from "sweetalert2";
+export function Form({ form, setForm, crearTarea, editarTarea, theme }) {
   const handleChange = (e) => {
     console.log(e.target.value);
     setForm({
@@ -12,7 +12,10 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
     e.preventDefault();
     console.log("enviando tarea:", form);
     if (!form.titulo && !form.descripcion) {
-      alert("llena todos los espacios");
+      Swal.fire({
+        icon: "warning",
+        title: "Llena todos los campos...",
+      });
       return;
     }
     if (!form.id) {
@@ -26,7 +29,11 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
   return (
     <Card color="transparent" shadow={false}>
       <div className="flex flex-col gap-2 w-[14rem] ">
-        <Typography variant="h4" color="blue-gray">
+        <Typography
+          variant="h4"
+          color="blue-gray"
+          className="dark:text-gray-100"
+        >
           Agrega una tarea:
         </Typography>
 
@@ -36,8 +43,12 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
           }}
           className="flex flex-col mt-0.5 mb-2 w-[100%] gap-3"
         >
-          <Typography>Nombre de tarea</Typography>
+          <Typography className="dark:text-gray-100">
+            Nombre de tarea
+          </Typography>
           <Input
+            className="dark:text-gray-100"
+            color={theme === "dark" ? "white" : "black"}
             type="text"
             label="Ejercicio, tarea..."
             name="titulo"
@@ -48,8 +59,12 @@ export function Form({ form, setForm, crearTarea, editarTarea }) {
               handleChange(e);
             }}
           />
-          <Typography>Descripcion de tarea</Typography>
+          <Typography className="dark:text-gray-100">
+            Descripcion de tarea
+          </Typography>
           <Input
+            className="dark:text-gray-100"
+            color={theme === "dark" ? "white" : "black"}
             type="text"
             name="descripcion"
             value={form.descripcion}

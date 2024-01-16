@@ -10,18 +10,17 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, NavLink } from "react-router-dom";
 
 function NavList() {
-  
   return (
     <ul className="my-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
         as="li"
         variant="small"
         color="blue-gray"
-        className="p-1 font-medium"
+        className="p-1 font-medium dark:text-gray-50"
       >
         <NavLink
           to="/lista"
-          className="flex items-center hover:text-blue-500 transition-colors"
+          className="flex items-center hover:text-blue-500 transition-colors dark:text-gray-50"
         >
           Lista
         </NavLink>
@@ -34,17 +33,16 @@ function NavList() {
       >
         <NavLink
           to="/info"
-          className="flex items-center hover:text-blue-500 transition-colors"
+          className="flex items-center hover:text-blue-500 transition-colors dark:text-gray-50"
         >
           Info
         </NavLink>
       </Typography>
-     
     </ul>
   );
 }
 
-export function NavbarSimple({setTheme}) {
+export function NavbarSimple({  }) {
   const [openNav, setOpenNav] = React.useState(false);
 
   const handleWindowResize = () =>
@@ -59,15 +57,18 @@ export function NavbarSimple({setTheme}) {
   }, []);
 
   return (
-    <Navbar className="mx-auto max-w-screen-xl px-6 py-3">
+    <Navbar className="mx-auto max-w-screen-xl px-6 py-3 dark:bg-black">
       <div className="flex items-center justify-between text-blue-gray-900">
-        <NavLink to="/" variant="h6" className="mr-4 cursor-pointer py-1.5">
+        <NavLink
+          to="/"
+          variant="h6"
+          className="mr-4 cursor-pointer py-1.5 dark:text-gray-50 "
+        >
           Recordatorios
         </NavLink>
         <div className="hidden lg:block">
           <NavList />
         </div>
-        
       </div>
       <Collapse open={openNav}>
         <NavList />

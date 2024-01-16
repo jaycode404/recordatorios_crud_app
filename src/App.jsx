@@ -6,6 +6,7 @@ import { Form } from "./components/Form";
 import { useEffect, useState } from "react";
 import { tareas as tareasDB } from "./DataBase/db.json";
 import Swal from "sweetalert2";
+import CirculoBlur from "./components/CirculoBlur";
 
 const initalForm = {
   id: null,
@@ -14,12 +15,16 @@ const initalForm = {
 };
 
 function App() {
-  const [theme, setTheme] = useState("light");
+  const initialTheme = localStorage.getItem("theme") || "light";
+  const [theme, setTheme] = useState(initialTheme);
   const [tareas, setTareas] = useState(tareasDB);
   const [form, setForm] = useState(initalForm);
   const contMargin = `m-[2rem]`;
 
   useEffect(() => {
+    
+    localStorage.setItem("theme", theme);
+
     if (theme === "dark") {
       document.querySelector("html").classList.add("dark");
     } else {
@@ -29,6 +34,7 @@ function App() {
   const handleDark = (e) => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
+
 
   //GET
   useEffect(() => {
@@ -132,11 +138,14 @@ function App() {
   return (
     <>
       <Router>
+        <CirculoBlur/>
         <div className={`${contMargin} dark:bg-black  `}>
           <Header />
         </div>
-        <div>
-          <button onClick={handleDark}>Dark</button>
+        <div className="flex justify-end mr-[5rem] dark:text-white">
+          <button onClick={handleDark}>
+            {theme === "dark" ? "Light ☼" : "Dark ☾"}
+          </button>
         </div>
         <Routes>
           <Route path="/">
@@ -151,6 +160,7 @@ function App() {
                         setForm={setForm}
                         crearTarea={crearTarea}
                         editarTarea={editarTarea}
+                        theme={theme}
                       />
                     </div>
                     <div className={`${contMargin}`}>
