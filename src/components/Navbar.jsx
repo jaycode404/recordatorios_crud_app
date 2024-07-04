@@ -35,7 +35,7 @@ function NavList() {
           to="/info"
           className="flex items-center hover:text-blue-500 transition-colors dark:text-gray-50"
         >
-          Info
+          Acerca De
         </NavLink>
       </Typography>
     </ul>

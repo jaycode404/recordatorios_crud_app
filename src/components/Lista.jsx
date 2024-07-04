@@ -4,7 +4,7 @@ import { SimpleCard } from "./Card";
 
 export default function Lista({ tareas, setForm, borrarTarea }) {
   return (
-    <div className="mx-[3rem]">
+    <div id="lista" className="mx-[3rem]">
       <Typography variant="h2" className="dark:text-gray-100">
         Aqui apareceran todos los recordatorios
       </Typography>
