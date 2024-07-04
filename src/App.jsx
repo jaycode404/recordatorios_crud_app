@@ -4,9 +4,12 @@ import Info from "./components/Info";
 import Lista from "./components/Lista";
 import { Form } from "./components/Form";
 import { useEffect, useState } from "react";
-import { tareas as tareasDB } from "./DataBase/db.json";
+import { db } from "./DataBase/firebase";
+import { ref, get, set, child, push, update } from "firebase/database";
+
 import Swal from "sweetalert2";
 import CirculoBlur from "./components/CirculoBlur";
+import { v4 as uuidv4 } from "uuid";
 
 const initalForm = {
   id: null,
@@ -17,12 +20,10 @@ const initalForm = {
 function App() {
   const initialTheme = localStorage.getItem("theme") || "light";
   const [theme, setTheme] = useState(initialTheme);
-  const [tareas, setTareas] = useState(tareasDB);
+  const [tareas, setTareas] = useState([]);
   const [form, setForm] = useState(initalForm);
   const contMargin = `m-[2rem]`;
-
   useEffect(() => {
-    
     localStorage.setItem("theme", theme);
 
     if (theme === "dark") {
@@ -35,72 +36,77 @@ function App() {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
-
   //GET
   useEffect(() => {
-    const obtenerTareas = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/tareas", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
+    const getTareas = async () => {
+      const tareasRef = ref(db, "tareas");
+      return get(tareasRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const tareasArr = snapshot.val();
+            if (!tareasArr) return [];
+            const newTareasArr = Object.keys(tareasArr).map((key) => ({
+              id: key,
+              ...tareasArr[key],
+            }));
+            setTareas(newTareasArr);
+          } else {
+            console.log("no se encontraron tareas");
+            return [];
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          return [];
         });
-        const data = await response.json();
-        setTareas(data);
-      } catch (error) {
-        console.log("error:", error);
-      }
     };
-
-    obtenerTareas();
+    getTareas();
   }, []);
-  //CREACION DE TAREA
-  const crearTarea = async (form) => {
-    try {
-      const response = await fetch("http://localhost:3000/tareas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
 
-      if (response.ok) {
-        form.id = tareas.length + 1;
-        setTareas([...tareas, form]);
-        setForm(initalForm);
-        console.log("tarea enviada con exito:", form);
-      } else {
-        alert("error al enviar la tarea");
-      }
-    } catch (error) {
-      console.log("Error:", error);
-    }
+
+  const randomId = () => {
+    return uuidv4();
   };
+  
+  // Función para crear una nueva tarea
+  const crearTarea = async (form) => {
+    if (!form.titulo || !form.descripcion) {
+      console.error("Title and description are required");
+      return;
+    }
+  
+    const id = randomId()
+    const tareaData = {
+      id: id,
+      title: form.title,
+      descripcion: form.descripcion,
+    };
+  
+    const tareaId = tareaData.id; // Obtener el ID generado
+    const tareasRef = ref(db, `tareas/${tareaId}`); // Referencia al nuevo documento en "tareas"
+  
+    // Guardar los datos de la tarea en la base de datos
+    set(tareasRef, tareaData)
+      .then(() => {
+        console.log('Tarea creada con éxito:', tareaData);
+        Swal.fire({
+          icon: "success",
+          title: "Enviado Con Éxito",
+          text: "La tarea se ha enviado con éxito.",
+        }).then(() => {
+          window.location.href = "/";
+        });
+      })
+      .catch((error) => {
+        console.error('Error al crear la tarea:', error);
+      });
+  };
+  
 
+  
   //EDITAR TAREA
   const editarTarea = async (form) => {
-    console.log("editando", form.id);
-
-    try {
-      const response = await fetch(`http://localhost:3000/tareas/${form.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (response.ok) {
-        setTareas((prevTareas) => {
-          const nuevasTareas = prevTareas.map((t) =>
-            t.id === form.id ? { ...t, form } : t
-          );
-          return nuevasTareas;
-        });
-        setForm(initalForm);
-        console.log("tarea enviada con exito:", form);
-      } else {
-        alert("error al enviar la tarea");
-      }
-    } catch (error) {
-      console.log("Error:", error);
-    }
+   
   };
 
   //BORRAR TAREA
@@ -138,7 +144,7 @@ function App() {
   return (
     <>
       <Router>
-        <CirculoBlur/>
+        <CirculoBlur />
         <div className={`${contMargin} dark:bg-black  `}>
           <Header />
         </div>
