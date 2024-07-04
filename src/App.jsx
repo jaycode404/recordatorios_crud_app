@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import CirculoBlur from "./components/CirculoBlur";
 import { v4 as uuidv4 } from "uuid";
 
-const initalForm = {
+const initialForm = {
   id: null,
   titulo: "",
   descripcion: "",
@@ -21,7 +21,7 @@ function App() {
   const initialTheme = localStorage.getItem("theme") || "light";
   const [theme, setTheme] = useState(initialTheme);
   const [tareas, setTareas] = useState([]);
-  const [form, setForm] = useState(initalForm);
+  const [form, setForm] = useState(initialForm);
   const contMargin = `m-[2rem]`;
   useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -61,7 +61,7 @@ function App() {
         });
     };
     getTareas();
-  }, []);
+  }, [tareas]);
 
   const randomId = () => {
     return uuidv4();
@@ -95,14 +95,18 @@ function App() {
         titulo: form.titulo,
         descripcion: form.descripcion,
       });
+      Swal.fire({
+        title: "Editada correctamente!",
+        icon: "success",
+      });
       console.log("Tarea actualizada exitosamente");
+      setForm(initialForm);
     } catch (error) {
       console.error("Error al actualizar la tarea:", error);
     }
   };
   //BORRAR TAREA
   const borrarTarea = async (id) => {
-
     console.log("borrando", id);
 
     const confirm = await Swal.fire({

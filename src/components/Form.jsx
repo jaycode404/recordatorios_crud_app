@@ -23,6 +23,7 @@ export function Form({ form, setForm, crearTarea, editarTarea, theme }) {
     } else {
       console.log("editando");
       editarTarea(form);
+      
     }
   };
 
