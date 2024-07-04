@@ -5,7 +5,7 @@ import Lista from "./components/Lista";
 import { Form } from "./components/Form";
 import { useEffect, useState } from "react";
 import { db } from "./DataBase/firebase";
-import { ref, get, set, child, push, update } from "firebase/database";
+import { ref, get, set, child, push, update, remove } from "firebase/database";
 
 import Swal from "sweetalert2";
 import CirculoBlur from "./components/CirculoBlur";
@@ -63,32 +63,16 @@ function App() {
     getTareas();
   }, []);
 
-
   const randomId = () => {
     return uuidv4();
   };
-  
+
   // Función para crear una nueva tarea
   const crearTarea = async (form) => {
-    if (!form.titulo || !form.descripcion) {
-      console.error("Title and description are required");
-      return;
-    }
-  
-    const id = randomId()
-    const tareaData = {
-      id: id,
-      title: form.title,
-      descripcion: form.descripcion,
-    };
-  
-    const tareaId = tareaData.id; // Obtener el ID generado
-    const tareasRef = ref(db, `tareas/${tareaId}`); // Referencia al nuevo documento en "tareas"
-  
-    // Guardar los datos de la tarea en la base de datos
-    set(tareasRef, tareaData)
+    const tareasRef = ref(db, `tareas/${randomId()}`);
+    set(tareasRef, form)
       .then(() => {
-        console.log('Tarea creada con éxito:', tareaData);
+        console.log("Tarea creada con éxito:");
         Swal.fire({
           icon: "success",
           title: "Enviado Con Éxito",
@@ -98,19 +82,27 @@ function App() {
         });
       })
       .catch((error) => {
-        console.error('Error al crear la tarea:', error);
+        console.error("Error al crear la tarea:", error);
       });
   };
-  
 
-  
   //EDITAR TAREA
   const editarTarea = async (form) => {
-   
-  };
+    try {
+      const taskRef = ref(db, `tareas/${form.id}`);
 
+      await update(taskRef, {
+        titulo: form.titulo,
+        descripcion: form.descripcion,
+      });
+      console.log("Tarea actualizada exitosamente");
+    } catch (error) {
+      console.error("Error al actualizar la tarea:", error);
+    }
+  };
   //BORRAR TAREA
   const borrarTarea = async (id) => {
+
     console.log("borrando", id);
 
     const confirm = await Swal.fire({
@@ -121,26 +113,28 @@ function App() {
 
     if (confirm.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3000/tareas/${id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        });
+        remove(ref(db, `tareas/${id}`));
 
-        if (response.ok) {
-          const nuevasTareas = tareas.filter((t) => t.id !== id);
-          setTareas(nuevasTareas);
-        } else {
-          alert("error al enviar la tarea");
-        }
+        console.log("Tarea eliminada correctamente");
+
+        const nuevasTareas = tareas.filter((t) => t.id !== id);
+        setTareas(nuevasTareas);
+
         Swal.fire({
           title: "Eliminada correctamente!",
           icon: "success",
         });
       } catch (error) {
-        console.log("Error:", error);
+        console.error("Error al eliminar la tarea:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un error al eliminar la tarea",
+          icon: "error",
+        });
       }
     }
   };
+
   return (
     <>
       <Router>
